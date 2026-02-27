@@ -2,7 +2,7 @@ package net.ruusika.brewerywinery.mixin;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class HeldItemFeatureRendererMixin {
     @Inject(method = "renderItem", at = @At("HEAD"), cancellable = true)
     private void disableServingTrayItemRendering(LivingEntity entity, ItemStack stack,
-                                                 ModelTransformation.Mode transformationMode, Arm arm,
+                                                 ModelTransformationMode transformationMode, Arm arm,
                                                  MatrixStack matrices, VertexConsumerProvider vertexConsumers,
                                                  int light, CallbackInfo ci) {
-      if (stack.getItem() instanceof ServingTrayItem) {
-         ci.cancel();
-      }
+        if (stack.getItem() instanceof ServingTrayItem) {
+            ci.cancel();
+        }
     }
 }

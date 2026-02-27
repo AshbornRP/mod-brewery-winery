@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "minecraft:magma_block",
-    "minecraft:lava",
     "minecraft:lava_cauldron"
   ]
 }

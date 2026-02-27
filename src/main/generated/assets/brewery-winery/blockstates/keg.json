@@ -1,12 +1,12 @@
 {
   "variants": {
     "facing=east,is_finished=false": {
-      "y": 90,
-      "model": "brewery-winery:block/keg_block"
+      "model": "brewery-winery:block/keg_block",
+      "y": 90
     },
     "facing=east,is_finished=true": {
-      "y": 90,
-      "model": "brewery-winery:block/keg_block_finished"
+      "model": "brewery-winery:block/keg_block_finished",
+      "y": 90
     },
     "facing=north,is_finished=false": {
       "model": "brewery-winery:block/keg_block"
@@ -15,20 +15,20 @@
       "model": "brewery-winery:block/keg_block_finished"
     },
     "facing=south,is_finished=false": {
-      "y": 180,
-      "model": "brewery-winery:block/keg_block"
+      "model": "brewery-winery:block/keg_block",
+      "y": 180
     },
     "facing=south,is_finished=true": {
-      "y": 180,
-      "model": "brewery-winery:block/keg_block_finished"
+      "model": "brewery-winery:block/keg_block_finished",
+      "y": 180
     },
     "facing=west,is_finished=false": {
-      "y": 270,
-      "model": "brewery-winery:block/keg_block"
+      "model": "brewery-winery:block/keg_block",
+      "y": 270
     },
     "facing=west,is_finished=true": {
-      "y": 270,
-      "model": "brewery-winery:block/keg_block_finished"
+      "model": "brewery-winery:block/keg_block_finished",
+      "y": 270
     }
   }
 }

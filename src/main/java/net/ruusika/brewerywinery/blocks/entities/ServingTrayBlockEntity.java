@@ -5,8 +5,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.DefaultedList;
@@ -80,24 +80,21 @@ public class ServingTrayBlockEntity extends BlockEntity {
 
     @Nullable
     public ItemStack removeFromTray() {
-        ItemStack removedStack = null;
         for (int i = inventory.size()-1; i >= 0; i--) {
             ItemStack entry = inventory.get(i);
             if (!entry.isEmpty()) {
-                removedStack = entry.copy();
+                ItemStack removedStack = entry.copy();
                 stackRotation.remove(i);
                 stackPosition.remove(i);
                 inventory.set(i, ItemStack.EMPTY);
-                break;
+                markDirty();
+                if (this.getWorld() instanceof ServerWorld serverWorld) {
+                    serverWorld.getChunkManager().markForUpdate(this.getPos());
+                }
+                return removedStack;
             }
         }
-        if (removedStack != null) {
-            markDirty();
-            if (this.getWorld() instanceof ServerWorld serverWorld) {
-                serverWorld.getChunkManager().markForUpdate(this.getPos());
-            }
-        }
-        return removedStack;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -107,8 +104,6 @@ public class ServingTrayBlockEntity extends BlockEntity {
 
     @Override
     public NbtCompound toInitialChunkDataNbt() {
-        NbtCompound nbt = new NbtCompound();
-        this.writeNbt(nbt);
         return createNbt();
     }
 

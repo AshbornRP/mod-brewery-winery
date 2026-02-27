@@ -1,9 +1,6 @@
 package net.ruusika.brewerywinery.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -24,14 +21,14 @@ import net.ruusika.brewerywinery.blocks.entities.KegBlockEntity;
 import net.ruusika.brewerywinery.init.BreweryWineryBlockEntities;
 import org.jetbrains.annotations.Nullable;
 
-public class KegBlock extends BlockWithEntity {
+public class KegBlock extends BlockWithEntity implements Waterloggable {
 
     public static final BooleanProperty IS_FINISHED = BooleanProperty.of("is_finished");
     public static final DirectionProperty HORIZONTAL_FACING = Properties.HORIZONTAL_FACING;
 
     public KegBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState()
+        setDefaultState(getStateManager().getDefaultState()
                 .with(IS_FINISHED, false)
                 .with(Properties.WATERLOGGED, false)
                 .with(HORIZONTAL_FACING, Direction.NORTH));
@@ -39,7 +36,6 @@ public class KegBlock extends BlockWithEntity {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
         builder.add(Properties.WATERLOGGED, IS_FINISHED, HORIZONTAL_FACING);
     }
 
@@ -47,7 +43,7 @@ public class KegBlock extends BlockWithEntity {
     public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
         return getDefaultState()
                 .with(Properties.WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).isOf(Fluids.WATER))
-                .with(HORIZONTAL_FACING, ctx.getPlayerFacing());
+                .with(HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing());
     }
 
     @Override
@@ -69,7 +65,7 @@ public class KegBlock extends BlockWithEntity {
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(Properties.WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }

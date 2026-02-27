@@ -10,10 +10,12 @@ import net.ruusika.brewerywinery.datagen.BreweryWineryTranslationProvider;
 public class BreweryWineryDataGenerator implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-		fabricDataGenerator.addProvider(BreweryWineryModelProvider::new);
-		fabricDataGenerator.addProvider(BreweryWineryTranslationProvider::new);
-		fabricDataGenerator.addProvider(BreweryWineryLootTableProvider::new);
-		//für Unterklassen bei Tags
-		BreweryWineryTagsProvider.registerAll(fabricDataGenerator);
+		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+
+		pack.addProvider(BreweryWineryModelProvider::new);
+		pack.addProvider(BreweryWineryTagsProvider.BWBlockTags ::new);
+		pack.addProvider(BreweryWineryTranslationProvider::new);
+		pack.addProvider(BreweryWineryLootTableProvider::new);
+
 	}
 }

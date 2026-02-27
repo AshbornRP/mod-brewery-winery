@@ -4,13 +4,14 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 import net.ruusika.brewerywinery.blocks.BeverageBlock;
 import net.ruusika.brewerywinery.blocks.entities.ServingTrayBlockEntity;
 
@@ -44,7 +45,7 @@ public class ServingTrayBlockEntityRenderer<T extends ServingTrayBlockEntity> im
             Vec3d randomPosition = new Vec3d(
                     MathHelper.lerp(normalizeRandomPosition.x, minRandomPosition, maxRandomPosition),
                     normalizeRandomPosition.y,
-                    MathHelper.lerp(normalizeRandomPosition.x, minRandomPosition, maxRandomPosition)
+                    MathHelper.lerp(normalizeRandomPosition.z, minRandomPosition, maxRandomPosition)
             );
 
             double offset = 0.195;
@@ -66,26 +67,27 @@ public class ServingTrayBlockEntityRenderer<T extends ServingTrayBlockEntity> im
 
             if (!stack.isEmpty()) {
 
-                ModelTransformation.Mode displayMode;
+                ModelTransformationMode displayMode;
 
                 matrices.push();
                 matrices.translate(x, 0.31, z);
 
                 if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof BeverageBlock) {
                     float scale = 0.5f;
-                    displayMode = ModelTransformation.Mode.HEAD;
+                    displayMode = ModelTransformationMode.HEAD;
                     float rotation = Optional.ofNullable(blockEntity.getStackRotation(i)).orElse(0f);
-                    matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(rotation));
+                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation));
                     matrices.scale(scale, scale, scale);
                 } else {
                     float scale = 0.25f;
-                    displayMode = ModelTransformation.Mode.FIXED;
+                    displayMode = ModelTransformationMode.FIXED;
                     matrices.scale(scale, scale, scale);
                     matrices.translate(0, -0.95, 0);
-                    matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
+                    matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
 
                 }
-                client.getItemRenderer().renderItem(stack, displayMode, light, overlay, matrices, vertexConsumers, seed);
+                BakedModel bakedModel = client.getItemRenderer().getModel(stack, blockEntity.getWorld(), null, seed);
+                client.getItemRenderer().renderItem(stack, displayMode, false, matrices, vertexConsumers, light, overlay, bakedModel);
 
                 matrices.pop();
             }

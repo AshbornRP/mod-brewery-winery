@@ -28,5 +28,7 @@ public class BreweryWineryClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(BreweryWineryBlocks.MEAD, RenderLayer.getCutout());
 
         BlockEntityRendererRegistry.register(BreweryWineryBlockEntities.SERVING_TRAY, ServingTrayBlockEntityRenderer::new);
+
+        BlockRenderLayerMap.INSTANCE.putBlock(BreweryWineryBlocks.HOPS_PLANT, RenderLayer.getCutout());
     }
 }

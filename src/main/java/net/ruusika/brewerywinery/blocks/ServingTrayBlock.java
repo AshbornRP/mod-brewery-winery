@@ -39,14 +39,13 @@ public class ServingTrayBlock extends BlockWithEntity implements Waterloggable {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
         builder.add(Properties.WATERLOGGED);
     }
 
     @Override
     public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState().with(Properties.WATERLOGGED, ctx.getWorld()
-                .getFluidState(ctx.getBlockPos()).isOf(Fluids.WATER));
+        boolean waterlogged = ctx.getWorld().getFluidState(ctx.getBlockPos()).isOf(Fluids.WATER);
+        return getDefaultState().with(Properties.WATERLOGGED, waterlogged);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class ServingTrayBlock extends BlockWithEntity implements Waterloggable {
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
                                                 WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(Properties.WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
@@ -76,35 +75,40 @@ public class ServingTrayBlock extends BlockWithEntity implements Waterloggable {
     //changes to block
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!(world.getBlockEntity(pos) instanceof ServingTrayBlockEntity servingTrayBlockEntity)) {
-            return super.onUse(state, world, pos, player, hand, hit);
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if(!(blockEntity instanceof ServingTrayBlockEntity servingTrayBlockEntity)) {
+            return ActionResult.PASS;
         }
 
         ItemStack stack = player.getStackInHand(hand);
-        if (stack.getItem().isFood() || stack.getItem() instanceof BeverageItem) {
+        if (!stack.isEmpty() && (stack.getItem().isFood() || stack.getItem() instanceof BeverageItem)) {
             if (servingTrayBlockEntity.addToTray(stack)) {
                 if (!player.isCreative()) {
                     stack.decrement(stack.getCount());
                 }
-                return ActionResult.SUCCESS;
+                return ActionResult.success(world.isClient);
             }
-        } else if (stack.isEmpty()) {
-            ItemStack returnedStack = servingTrayBlockEntity.removeFromTray();
-            if (returnedStack != null) {
-                player.getInventory().offerOrDrop(returnedStack);
-                return ActionResult.SUCCESS;
-            }
+            return ActionResult.PASS;
         }
-        return super.onUse(state, world, pos, player, hand, hit);
+
+        if (stack.isEmpty()) {
+            ItemStack returnedStack = servingTrayBlockEntity.removeFromTray();
+            if (!returnedStack.isEmpty()) {
+                player.getInventory().offerOrDrop(returnedStack);
+                return ActionResult.success(world.isClient);
+            }
+            return ActionResult.PASS;
+        }
+        return ActionResult.PASS;
     }
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!(world.getBlockEntity(pos) instanceof ServingTrayBlockEntity servingTrayBlockEntity)) {
-            return;
-        }
-        if (!state.getBlock().equals(newState.getBlock())) {
-            ItemScatterer.spawn(world, pos, servingTrayBlockEntity.getInventory());
+        if (!state.isOf(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof ServingTrayBlockEntity servingTrayBlockEntity) {
+                ItemScatterer.spawn(world, pos, servingTrayBlockEntity.getInventory());
+            }
         }
         super.onStateReplaced(state, world, pos, newState, moved);
     }

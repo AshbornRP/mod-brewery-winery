@@ -2,10 +2,8 @@ package net.ruusika.brewerywinery;
 
 import net.fabricmc.api.ModInitializer;
 
-import net.ruusika.brewerywinery.init.BreweryWineryBlockEntities;
-import net.ruusika.brewerywinery.init.BreweryWineryBlocks;
-import net.ruusika.brewerywinery.init.BreweryWineryItems;
-import net.ruusika.brewerywinery.init.BreweryWineryProperties;
+import net.minecraft.util.Identifier;
+import net.ruusika.brewerywinery.init.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +13,15 @@ public class BreweryWinery implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		BreweryWineryItems.initialize();
 		BreweryWineryBlocks.initialize();
 		BreweryWineryBlockEntities.initialize();
+		BreweryWineryItems.initialize();
+		BreweryWineryItemGroups.initialize();
 		BreweryWineryProperties.initialize();
 		LOGGER.info("DINONUGGETS!");
+	}
+
+	public static Identifier getId(String path) {
+		return Identifier.of(MOD_ID, path);
 	}
 }

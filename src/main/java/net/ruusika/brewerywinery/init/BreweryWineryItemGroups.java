@@ -14,7 +14,7 @@ import net.ruusika.brewerywinery.BreweryWinery;
 public class BreweryWineryItemGroups {
     public static final RegistryKey<ItemGroup> BREWERY_WINERY = register("brewery-winery",
             FabricItemGroup.builder().icon(() -> new ItemStack(BreweryWineryItems.LAGER_BEER))
-                    .displayName(Text.translatable("itemGroup.brewery-winery.brewery-winery")).build());
+                    .displayName(Text.translatable("itemGroup.brewerywinery.brewery-winery")).build());
 
 
     @SuppressWarnings("SameParameterValue")

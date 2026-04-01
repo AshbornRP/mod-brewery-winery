@@ -14,6 +14,7 @@ public class BreweryWineryDataGenerator implements DataGeneratorEntrypoint {
 
 		pack.addProvider(BreweryWineryModelProvider::new);
 		pack.addProvider(BreweryWineryTagsProvider.BWBlockTags ::new);
+		pack.addProvider(BreweryWineryTagsProvider.BWItemTags ::new);
 		pack.addProvider(BreweryWineryTranslationProvider::new);
 		pack.addProvider(BreweryWineryLootTableProvider::new);
 

@@ -26,6 +26,8 @@ public class BreweryWineryTags {
         public static final TagKey<Item> BEER_ADDITIVES_MONSTER_FOOD = createTag("beer_additives/monster_food");
         public static final TagKey<Item> BEER_ADDITIVES_WEIRD_MISC = createTag("beer_additives/weird_misc");
 
+        public static final TagKey<Item> BEER_BASE_WATER = createTag("beer_base/water");
+
         private static TagKey<Item> createTag(String name) {
             return TagKey.of(RegistryKeys.ITEM, new Identifier(BreweryWinery.MOD_ID, name));
         }
